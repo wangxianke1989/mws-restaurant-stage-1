@@ -1,4 +1,4 @@
-let web_cache_name = 'restaurant_cache_01'
+let web_cache_name = 'restaurant_cache'
 
 self.addEventListener('activate',function(event){
 	event.waitUntil(
@@ -21,11 +21,14 @@ self.addEventListener('fetch', function(event) {
 		caches.match(event.request).then(function(response){
 			if (response){return response;}
 
-			var request = event.request.clone();
+			let request = event.request.clone();
 			return fetch(request).then(function(response){
-				var responseToCache = response.clone();
+				let responseToCache = response.clone();
 				caches.open(web_cache_name).then(function(cache){
-					cache.put(event.request,responseToCache);
+					let fetchUrl = event.request.url;
+					if(fetchUrl.startWith("http://localhost")){
+						cache.put(event.request,responseToCache);
+					}
 				});
 			return response;
 			})
