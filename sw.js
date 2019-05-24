@@ -2,11 +2,10 @@ let web_cache_name = 'restaurant_cache'
 
 self.addEventListener('activate',function(event){
 	event.waitUntil(
-
 		caches.keys().then(function(cacheNames){
 			return Promise.all(
 				cacheNames.filter(function(cacheName){
-					cacheName.startWith('restaurant_')&&
+					cacheName.starstWith('restaurant_')&&
 					cacheName != web_cache_name;
 				}).map(function(cacheName){
 					caches.delete(cacheName);
@@ -21,16 +20,16 @@ self.addEventListener('fetch', function(event) {
 		caches.match(event.request).then(function(response){
 			if (response){return response;}
 
-			let request = event.request.clone();
-			return fetch(request).then(function(response){
+			return fetch(event.request).then(function(response){
 				let responseToCache = response.clone();
 				caches.open(web_cache_name).then(function(cache){
 					let fetchUrl = event.request.url;
-					if(fetchUrl.startWith("http://localhost")){
+					if(fetchUrl.startsWith("http://localhost")){
 						cache.put(event.request,responseToCache);
 					}
+
 				});
-			return response;
+				return response;
 			})
 		})
 	)
